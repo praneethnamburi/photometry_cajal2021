@@ -3,7 +3,7 @@ mDb = table2struct(readtable(fname_metadata));
 m = mDb(strcmp({mDb.MouseID}, 'F1728'));
 
 for mCount = 1:height(mDb)
-    [photodata_reg, mDb(mCount).t] = process_EPM(mDb(mCount));
+    [photodata_reg, mDb(mCount).t, mDb(mCount).ref_img] = process_EPM(mDb(mCount));
     mDb(mCount).(m.GCaMP6s) = photodata_reg.GCaMP6s;
     mDb(mCount).(m.jRGECO1a) = photodata_reg.jRGECO1a;
 end
@@ -19,7 +19,7 @@ for mCount = 1:height(metadata)
 end
 end
 
-function [photodata_reg, t] = process_EPM(m, plotflag)
+function [photodata_reg, t, ref_img] = process_EPM(m, plotflag)
 if nargin == 1
     plotflag = false;
 end
