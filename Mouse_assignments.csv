@@ -1,8 +1,8 @@
-fdir_EPM,fprefix_EPM,fprefix_OFT,MouseID,Mouse_Number,GCaMP6s,jRGECO1a,start_frame_EPM,start_frame_OFT,Notes
-C:\Users\Praneeth\Desktop\Cajal2021\20211125EPM\data\,F0002_02_20211125-164719,F0002_20211126-123608behaviour_cam,F0002,F1700/F1701,aIC_BLA,aIC_CeM,1170,1092,Has two colors
-C:\Users\Praneeth\Desktop\Cajal2021\20211125EPM\data\,F0004_20211125-170912,,F0004,F1700/F1701,aIC_BLA,aIC_CeM,11462,,Has broken fiber
-C:\Users\Praneeth\Desktop\Cajal2021\20211125EPM\data\,F1727_02_20211125-160231,F1727_03_20211126-120512behaviour_cam,F1727,F1727,aIC_CeM,aIC_BLA,0,1463,Only has GCaMP
-C:\Users\Praneeth\Desktop\Cajal2021\20211125EPM\data\,F1728_02_20211125-162238,F1728_20211126-131928behaviour_cam,F1728,F1728,aIC_CeM,aIC_BLA,1770,2310,Has two colors
-C:\Users\Praneeth\Desktop\Cajal2021\20211125EPM\data\,M0001_20211125-183057,,M0001,M1699,aIC_BLA,aIC_CeM,4989,,"Has eye issue, no OFT, one color"
-C:\Users\Praneeth\Desktop\Cajal2021\20211125EPM\data\,M1698_20211125-174154,M1698_20211126-104501behaviour_cam,M1698,M1698,aIC_CeM,aIC_BLA,3065,3550,Has both colors
-C:\Users\Praneeth\Desktop\Cajal2021\20211125EPM\data\,M0003_02_20211125-180550,M0003_20211126-112334behaviour_cam,M0003,M1697,aIC_CeM,aIC_BLA,1271,3397,"Has both colors, but only one in OFT"
+fdir_EPM,fprefix_EPM,fdir_OFT,fprefix_OFT,MouseID,Mouse_Number,GCaMP6s,jRGECO1a,start_frame_EPM,start_frame_OFT,Notes
+C:\Users\Praneeth\Desktop\Cajal2021\20211125EPM\data\,F0002_02_20211125-164719,C:\Users\Praneeth\Desktop\Cajal2021\20211126OFT\,F0002_02_20211126-124127,F0002,F1700/F1701,aIC_BLA,aIC_CeM,1170,1092,Has two colors
+C:\Users\Praneeth\Desktop\Cajal2021\20211125EPM\data\,F0004_20211125-170912,,,F0004,F1700/F1701,aIC_BLA,aIC_CeM,11462,,Has broken fiber
+C:\Users\Praneeth\Desktop\Cajal2021\20211125EPM\data\,F1727_02_20211125-160231,C:\Users\Praneeth\Desktop\Cajal2021\20211126OFT\,F1727_03_20211126-120512,F1727,F1727,aIC_CeM,aIC_BLA,0,1463,Only has GCaMP
+C:\Users\Praneeth\Desktop\Cajal2021\20211125EPM\data\,F1728_02_20211125-162238,C:\Users\Praneeth\Desktop\Cajal2021\20211126OFT\,F1728_20211126-131928,F1728,F1728,aIC_CeM,aIC_BLA,1770,2310,Has two colors
+C:\Users\Praneeth\Desktop\Cajal2021\20211125EPM\data\,M0001_20211125-183057,,,M0001,M1699,aIC_BLA,aIC_CeM,4989,,"Has eye issue, no OFT, one color"
+C:\Users\Praneeth\Desktop\Cajal2021\20211125EPM\data\,M1698_20211125-174154,C:\Users\Praneeth\Desktop\Cajal2021\20211126OFT\,M1698_20211126-104501,M1698,M1698,aIC_CeM,aIC_BLA,3065,3550,Has both colors
+C:\Users\Praneeth\Desktop\Cajal2021\20211125EPM\data\,M0003_02_20211125-180550,C:\Users\Praneeth\Desktop\Cajal2021\20211126OFT\,M0003_20211126-112334,M0003,M1697,aIC_CeM,aIC_BLA,1271,3397,"Has both colors, but only one in OFT"

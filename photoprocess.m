@@ -2,14 +2,17 @@ fname_metadata = 'C:\dev\photometry_cajal2021\Mouse_assignments.csv';
 mDb = table2struct(readtable(fname_metadata));
 m = mDb(strcmp({mDb.MouseID}, 'F1728'));
 
+save_ref_img_OFT(mDb);
+
 for mCount = 1:height(mDb)
-    [photodata_reg, mDb(mCount).t, mDb(mCount).ref_img] = process_EPM(mDb(mCount));
-    mDb(mCount).(m.GCaMP6s) = photodata_reg.GCaMP6s;
-    mDb(mCount).(m.jRGECO1a) = photodata_reg.jRGECO1a;
+    mDb(mCount).EPM = struct;
+    [photodata, mDb(mCount).EPM.t, mDb(mCount).ref_img] = process_EPM(mDb(mCount));
+    mDb(mCount).EPM.aIC_BLA = photodata.aIC_BLA;
+    mDb(mCount).EPM.aIC_BLA = photodata.aIC_CeM;
 end
 
 % save a reference frame from the video
-function [] = save_ref_img(metadata)
+function [] = save_ref_img_EPM(metadata)
 frame_number = 1000;
 for mCount = 1:height(metadata)
     m = table2struct(metadata(mCount, :));
@@ -19,7 +22,20 @@ for mCount = 1:height(metadata)
 end
 end
 
-function [photodata_reg, t, ref_img] = process_EPM(m, plotflag)
+% save a reference frame from the video
+function [] = save_ref_img_OFT(mDb)
+frame_number = 1000;
+for mCount = 1:length(mDb)
+    m = mDb(mCount);
+    if ~isempty(m.fprefix_OFT)
+        v = VideoReader([m.fdir_OFT, m.fprefix_OFT, 'behaviour_cam.mp4']);
+        ref_img = rgb2gray(read(v, frame_number));
+        imwrite(cat(3, ref_img, ref_img, ref_img), [m.fprefix_OFT, '_OFT_frame' num2str(frame_number) '.png']);
+    end
+end
+end
+
+function [photodata, t, ref_img] = process_EPM(m, plotflag)
 if nargin == 1
     plotflag = false;
 end
@@ -122,6 +138,10 @@ photodata_reg = table;
 photodata_reg.GCaMP6s = r+b(2);
 [b, ~, r] = regress(photodata_detrend.jRGECO1a, [photodata_detrend.jRGECO1a_iso, ones(length(t), 1)]);
 photodata_reg.jRGECO1a = r+b(2);
+
+photodata = struct;
+photodata.(m.GCaMP6s) = photodata_reg.GCaMP6s;
+photodata.(m.jRGECO1a) = photodata_reg.jRGECO1a;
 
 if plotflag
     % Plot EPM reference image and tracks
