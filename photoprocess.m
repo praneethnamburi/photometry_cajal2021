@@ -2,11 +2,9 @@ fname_metadata = 'C:\dev\photometry_cajal2021\Mouse_assignments.csv';
 mDb = table2struct(readtable(fname_metadata));
 m = mDb(strcmp({mDb.MouseID}, 'F1728'));
 
-save_ref_img_OFT(mDb);
-
 for mCount = 1:height(mDb)
     mDb(mCount).EPM = struct;
-    [photodata, mDb(mCount).EPM.t, mDb(mCount).ref_img] = process_EPM(mDb(mCount));
+    [photodata, mDb(mCount).EPM.t, mDb(mCount).EPM.ref_img, mDb(mCount).EPM.track] = process_EPM(mDb(mCount));
     mDb(mCount).EPM.aIC_BLA = photodata.aIC_BLA;
     mDb(mCount).EPM.aIC_BLA = photodata.aIC_CeM;
 end
@@ -35,7 +33,7 @@ for mCount = 1:length(mDb)
 end
 end
 
-function [photodata, t, ref_img] = process_EPM(m, plotflag)
+function [photodata, t, ref_img, track] = process_EPM(m, plotflag)
 if nargin == 1
     plotflag = false;
 end
