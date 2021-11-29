@@ -1,12 +1,51 @@
 fname_metadata = 'C:\dev\photometry_cajal2021\Mouse_assignments.csv';
 mDb = table2struct(readtable(fname_metadata));
-m = mDb(strcmp({mDb.MouseID}, 'F1728'));
+% m = mDb(strcmp({mDb.MouseID}, 'M1698'));
 
 for mCount = 1:height(mDb)
     mDb(mCount).EPM = struct;
     [photodata, mDb(mCount).EPM.t, mDb(mCount).EPM.ref_img, mDb(mCount).EPM.track] = process_EPM(mDb(mCount));
     mDb(mCount).EPM.aIC_BLA = photodata.aIC_BLA;
-    mDb(mCount).EPM.aIC_BLA = photodata.aIC_CeM;
+    mDb(mCount).EPM.aIC_CeM = photodata.aIC_CeM;
+end
+
+mDb = epm_roi_analysis(mDb);
+
+
+%----------------------------------------------
+function [mDb] = epm_roi_analysis(mDb)
+h = figure;
+color_list = get(gca, 'ColorOrder');
+close(h);
+roi = struct;
+roi.open_arm_top = struct('pos', [487, 270, 70, 345], 'color', color_list(1, :), 'index', 1);
+roi.open_arm_bottom = struct('pos', [487, 665, 70, 355], 'color', color_list(2, :), 'index', 2);
+roi.closed_arm_left = struct('pos', [128, 615, 372, 50], 'color', color_list(3, :), 'index', 3);
+roi.closed_arm_right = struct('pos', [550, 615, 372, 50], 'color', color_list(4, :), 'index', 4);
+roi.center = struct('pos', [497, 615, 50, 50], 'color', color_list(5, :), 'index', 5);
+
+roi_names = fieldnames(roi);
+for roiCount = 1:length(roi_names)
+    this_roi_name = roi_names{roiCount};
+    this_roi = roi.(this_roi_name);
+    rectangle(Position=this_roi.pos, EdgeColor=this_roi.color, LineWidth=3);
+    tmp1 = num2cell(this_roi.pos);
+    [x, y, w, h] = tmp1{:};
+    for mCount = 1:length(mDb)
+        mDb(mCount).EPM.roi(roiCount).pos = this_roi.pos;
+        mDb(mCount).EPM.roi(roiCount).color = this_roi.color;
+        mDb(mCount).EPM.roi(roiCount).name = this_roi_name;
+        tk = mDb(mCount).EPM.track;
+        reg_bool = tk.mouseX > x & tk.mouseX < x+w & tk.mouseY > y & tk.mouseY < y+h;
+        mDb(mCount).EPM.track.(this_roi_name) = reg_bool;
+        mDb(mCount).EPM.roi(roiCount).dur = mean(reg_bool);
+    end
+end
+
+for mCount = 1:length(mDb)
+    mDb(mCount).EPM.track.open_arm = mDb(mCount).EPM.track.open_arm_top | mDb(mCount).EPM.track.open_arm_bottom;
+    mDb(mCount).EPM.track.closed_arm = mDb(mCount).EPM.track.closed_arm_left | mDb(mCount).EPM.track.closed_arm_right;
+end
 end
 
 % save a reference frame from the video
@@ -32,6 +71,7 @@ for mCount = 1:length(mDb)
     end
 end
 end
+
 
 function [photodata, t, ref_img, track] = process_EPM(m, plotflag)
 if nargin == 1
@@ -137,6 +177,10 @@ photodata_reg.GCaMP6s = r+b(2);
 [b, ~, r] = regress(photodata_detrend.jRGECO1a, [photodata_detrend.jRGECO1a_iso, ones(length(t), 1)]);
 photodata_reg.jRGECO1a = r+b(2);
 
+photodata_bandpass = table;
+photodata_bandpass.GCaMP6s = bandpass(photodata_reg.GCaMP6s, [0.2, 6], photodata_sr);
+photodata_bandpass.jRGECO1a = bandpass(photodata_reg.jRGECO1a, [0.2, 6], photodata_sr);
+
 photodata = struct;
 photodata.(m.GCaMP6s) = photodata_reg.GCaMP6s;
 photodata.(m.jRGECO1a) = photodata_reg.jRGECO1a;
@@ -155,14 +199,16 @@ if plotflag
     % plot the signal and the trend to check
     figure;
     ndim = length(photodata_raw.Properties.VariableNames);
+    hax = [];
     for i = 1:ndim
-        subplot(ndim, 1, i);
+        hax(i) = subplot(ndim, 1, i);
         dim_name = photodata_raw.Properties.VariableNames{i};
         plot(t, photodata_raw.(dim_name));
         hold all;
         plot(t, photodata_trend.(dim_name));
         title(dim_name);
     end
+    linkaxes(hax, 'x');
 
     figure;
     subplot(2, 1, 1);
