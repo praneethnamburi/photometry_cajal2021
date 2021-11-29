@@ -177,13 +177,18 @@ photodata_reg.GCaMP6s = r+b(2);
 [b, ~, r] = regress(photodata_detrend.jRGECO1a, [photodata_detrend.jRGECO1a_iso, ones(length(t), 1)]);
 photodata_reg.jRGECO1a = r+b(2);
 
+% either smooth or bandpass - PN votes for smooth
 photodata_bandpass = table;
 photodata_bandpass.GCaMP6s = bandpass(photodata_reg.GCaMP6s, [0.2, 6], photodata_sr);
 photodata_bandpass.jRGECO1a = bandpass(photodata_reg.jRGECO1a, [0.2, 6], photodata_sr);
 
+photodata_smooth = table;
+photodata_smooth.GCaMP6s = smooth(photodata_reg.GCaMP6s, round(photodata_sr/3));
+photodata_smooth.jRGECO1a = smooth(photodata_reg.jRGECO1a, round(photodata_sr/3));
+
 photodata = struct;
-photodata.(m.GCaMP6s) = photodata_reg.GCaMP6s;
-photodata.(m.jRGECO1a) = photodata_reg.jRGECO1a;
+photodata.(m.GCaMP6s) = photodata_smooth.GCaMP6s;
+photodata.(m.jRGECO1a) = photodata_smooth.jRGECO1a;
 
 if plotflag
     % Plot EPM reference image and tracks

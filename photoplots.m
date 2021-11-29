@@ -10,9 +10,26 @@ track_line_color = [0.9290, 0.6940, 0.1250];
 centroid_color = [0.3010, 0.7450, 0.9330];
 
 roi_names = {'open_arm', 'closed_arm', 'center'};
+if strcmp(m.MouseID, 'F0002')
+    diff_start_times = [146, 164, 231, 275, 650, 665, 685, 745];
+    diff_end_times =   [153, 167, 242, 300, 660, 675, 695, 750];
+    same_start_times = [164, 209, 300, 610, 790];
+    same_end_times =   [171, 231, 315, 615, 810];
+    
+    m.EPM.track.CaSig_diff = false(size(m.EPM.t));
+    for dtCount = 1:length(diff_start_times)
+        m.EPM.track.CaSig_diff(m.EPM.t > diff_start_times(dtCount) & m.EPM.t < diff_end_times(dtCount)) = true;
+    end
+    m.EPM.track.CaSig_same = false(size(m.EPM.t));
+    for stCount = 1:length(same_start_times)
+        m.EPM.track.CaSig_same(m.EPM.t > same_start_times(stCount) & m.EPM.t < same_end_times(stCount)) = true;
+    end
+    roi_names{end+1} = 'CaSig_diff';
+    roi_names{end+1} = 'CaSig_same';
+end
 % roi_names = {'open_arm_top', 'open_arm_bottom', 'closed_arm_left', 'closed_arm_right', 'center'};
 figure('Units','normalized','OuterPosition',[0, 0, 1, 1]);
-axEntry = subplot(3, 1, 1);
+axEntry = subplot(2, 1, 1);
 for roiCount = 1:length(roi_names)
     plot(m.EPM.t, m.EPM.track.(roi_names{roiCount}) - 1.2*roiCount); 
     hold all;
@@ -22,7 +39,8 @@ legend(roi_names, 'Interpreter', 'none');
 xlabel('Time(s)');
 title(m.MouseID);
 
-axBLA = subplot(3, 1, 2);
+axBLA = subplot(2, 1, 2);
+yyaxis left;
 if strcmp(m.GCaMP6s, 'aIC_BLA')
     yl_prefix = 'GCaMP6s';
 else
@@ -31,9 +49,10 @@ end
 plot(m.EPM.t, m.EPM.aIC_BLA, LineWidth=1.5, color=BLA_color);
 xlabel('Time (s)');
 ylabel([yl_prefix '  Fluorescence (a.u.)']);
-title('aIC-BLA');
+% title('aIC-BLA');
 
-axCeM = subplot(3, 1, 3);
+% axCeM = subplot(3, 1, 3);
+yyaxis right;
 if strcmp(m.GCaMP6s, 'aIC_CeM')
     yl_prefix = 'GCaMP6s';
 else
@@ -42,6 +61,6 @@ end
 plot(m.EPM.t, m.EPM.aIC_CeM, LineWidth=1.5, color=CeM_color);
 xlabel('Time (s)');
 ylabel([yl_prefix '  Fluorescence (a.u.)']);
-title('aIC-CeM');
+% title('aIC-CeM');
 
-linkaxes([axEntry, axBLA, axCeM], 'x');
+linkaxes([axEntry, axBLA], 'x');
