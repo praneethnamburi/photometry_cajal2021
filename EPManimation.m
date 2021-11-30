@@ -1,9 +1,12 @@
 render_video(mDb, 'F0002');
 render_video(mDb, 'F1728');
 render_video(mDb, 'M1698');
+render_video(mDb, 'F0004');
+render_video(mDb, 'F1727');
+render_video(mDb, 'M0001');
+render_video(mDb, 'M0003');
 
 function [] = render_video(mDb, mID)
-% mID = 'F0002';
 m = mDb(strcmp({mDb.MouseID}, mID));
 time_window = 60; % s
 frame_delta = 1; % s
@@ -70,15 +73,21 @@ title('aIC-CeM');
 
 linkaxes([axBLA, axCeM], 'x');
 xlim([300 400]);
+sgtitle(mID);
 
 
 all_frames = round((m.EPM.t+time_window/2)*photodata_sr):frame_delta:length(m.EPM.t);
 t_start = m.EPM.t(1);
 video_frame_offset = round(t_start*photodata_sr);
+sav_dir = 'C:\Users\Praneeth\Desktop\Cajal2021\screenshots\';
+sav_vid = VideoWriter([sav_dir, mID]);
+sav_vid.FrameRate = 30;
+open(sav_vid);
 for frameCount = 1:length(all_frames)
     frameNumber = all_frames(frameCount);
-    sav_name = [mID, '\', mID, '_f', num2str(frameNumber, '%03d'), '_', num2str(frameCount, '%03d')];
-    if ~exist(sav_name, 'file')
+%     sav_name = [mID, '\', mID, '_f', num2str(frameNumber, '%03d'), '_', num2str(frameCount, '%03d')];
+    
+%     if ~exist(sav_name, 'file')
         im = rgb2gray(read(v, frameNumber + video_frame_offset));
         hIm.CData = cat(3, im, im, im);
         this_t = m.EPM.t(frameNumber);
@@ -89,10 +98,11 @@ for frameCount = 1:length(all_frames)
         hCentroid.YData = tk.mouseY(frameNumber);
         hPath.XData = tk.mouseX(frameNumber+ (0:-1:-n_timepts_track));
         hPath.YData = tk.mouseY(frameNumber+ (0:-1:-n_timepts_track));
-        % drawnow
-        export_fig(sav_name);
-    end
+        writeVideo(sav_vid, getframe(h));
+%         drawnow;
+%         export_fig(sav_name);
+%     end
 end
-
+close(sav_vid);
 close(h);
 end

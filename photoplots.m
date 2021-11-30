@@ -1,3 +1,4 @@
+%% behavior markers with 
 m = mDb(strcmp({mDb.MouseID}, 'F1728'));
 
 GCaMP_color = [0.4660, 0.6740, 0.1880];
@@ -72,3 +73,53 @@ ylabel([yl_prefix '  Fluorescence (a.u.)']);
 % title('aIC-CeM');
 
 linkaxes([axEntry, axBLA], 'x');
+
+%% compare activity in aIC-BLA and aIC-CeM neurons
+
+
+all_mID = {mDb.MouseID};
+for mCount = 1:length(all_mID)
+% m = mDb(strcmp({mDb.MouseID}, 'M1698'));
+h = figure(Units="normalized", OuterPosition=[0, 0, 1, 1]);
+m = mDb(mCount);
+roi_names = {'closed_arm', 'open_arm', 'center'};
+hax = [];
+BLA_med = median(m.EPM.aIC_BLA);
+BLA_std = std(m.EPM.aIC_BLA);
+CeM_med = median(m.EPM.aIC_CeM);
+CeM_std = std(m.EPM.aIC_CeM);
+sel_BLA = m.EPM.aIC_BLA > BLA_med + BLA_std | m.EPM.aIC_BLA < BLA_med - BLA_std;
+sel_CeM = m.EPM.aIC_CeM > CeM_med + CeM_std | m.EPM.aIC_CeM < CeM_med - CeM_std;
+for roiCount = 1:length(roi_names)
+    roi_name = roi_names{roiCount};
+    hax(roiCount) = scatter(m.EPM.aIC_BLA(m.EPM.track.(roi_name)), m.EPM.aIC_CeM(m.EPM.track.(roi_name)));
+    hold all;
+end
+legend(hax, roi_names, 'Interpreter','none');
+plot([0, 0], get(gca, 'YLim'), 'k', LineWidth=1.5);
+plot(get(gca, 'XLim'), [0, 0], 'k', LineWidth=1.5);
+if strcmp(m.GCaMP6s, 'aIC_BLA')
+    xl_pre = 'GCaMP6s';
+    yl_pre = 'jRGECO1a';
+else
+    xl_pre = 'jRGECO1a';
+    yl_pre = 'GCaMP6s';
+end
+xlabel(['aIC-BLA photometry signal (', xl_pre, ')']);
+ylabel(['aIC-CeM photometry signal (', yl_pre, ')']);
+if strcmp(m.MouseID, 'F1727')
+    xlim([-1 1]*0.2e-3);
+end
+title(m.MouseID);
+saveas(h, ['C:\Users\Praneeth\Desktop\Cajal2021\screenshots\', m.MouseID, '_population_scatter.png']);
+close(h);
+end
+% m = mDb(strcmp({mDb.MouseID}, 'F1728'));
+% m = mDb(strcmp({mDb.MouseID}, 'M1698'));
+
+%%
+% Fluorescence heat map
+% Ca2+ fluorescence bar graph
+% Scatter plot comparing Ca2+ activity - Scatter plot through time? Open vs closed arms, choose some points randomly to reduce the density.
+% F0002, around 700s, look for divergent activity in the populations.
+% 740 s - aIC-CeM activity falls right before a turn in the closed arm!!

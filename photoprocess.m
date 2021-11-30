@@ -151,13 +151,6 @@ t = t_vec(frame_sel);
 photodata_raw = photodata_raw(frame_sel, :);
 track = track(frame_sel, :);
 
-% plot raw GCaMP6s and jRGECO1a signals
-subplot(1, 2, 2);
-yyaxis left;
-plot(t, photodata_raw.GCaMP6s);
-yyaxis right;
-plot(t, photodata_raw.jRGECO1a);
-
 % detrend using airPLS algorithm
 photodata_trend = table;
 photodata_detrend = table;
@@ -200,6 +193,13 @@ if plotflag
     hold all;
     plot(track.mouseX, track.mouseY);
     axis off;
+    
+    % plot raw GCaMP6s and jRGECO1a signals
+    subplot(1, 2, 2);
+    yyaxis left;
+    plot(t, photodata_raw.GCaMP6s);
+    yyaxis right;s
+    plot(t, photodata_raw.jRGECO1a);
 
     % plot the signal and the trend to check
     figure;
